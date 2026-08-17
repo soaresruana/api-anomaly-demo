@@ -1,0 +1,20 @@
+services:
+  api-demo:
+    build:
+      context: ./src/api-demo
+      dockerfile: Dockerfile
+
+    container_name: api-demo
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Data Source=/app/data/api-demo.db"
+
+    volumes:
+      - api-demo-data:/app/data
+
+volumes:
+  api-demo-data:
