@@ -1,0 +1,15 @@
+_format_version: "3.0"
+
+services:
+  - name: api-demo-service
+    url: http://api-demo:8080
+
+    routes:
+      - name: api-demo-route
+        paths:
+          - /
+        strip_path: false
+
+plugins:
+  - name: anomaly-collector
+    service: api-demo-service

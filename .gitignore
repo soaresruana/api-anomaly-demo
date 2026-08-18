@@ -485,3 +485,9 @@ $RECYCLE.BIN/
 *.db
 *.db-shm
 *.db-wal
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/

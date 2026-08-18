@@ -1,4 +1,5 @@
 services:
+
   api-demo:
     build:
       context: ./src/api-demo
@@ -16,5 +17,54 @@ services:
     volumes:
       - api-demo-data:/app/data
 
+  kong:
+    build:
+      context: ./src/kong
+      dockerfile: Dockerfile
+
+    container_name: kong
+
+    depends_on:
+      - api-demo
+      - anomaly-service
+
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+
+    environment:
+      KONG_DATABASE: "off"
+
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+
+      KONG_PLUGINS: bundled,anomaly-collector
+
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+
+    volumes:
+      - ./src/kong/kong.yml:/kong/declarative/kong.yml:ro
+
+  anomaly-service:
+    build:
+      context: ./src/anomaly-service
+      dockerfile: Dockerfile
+
+    container_name: anomaly-service
+
+    ports:
+      - "8090:8090"
+
+    environment:
+      EXPERIMENT_DB_PATH: /app/data/experiment.db
+    volumes:
+    - anomaly-data:/app/data
+
 volumes:
   api-demo-data:
+  anomaly-data:  
