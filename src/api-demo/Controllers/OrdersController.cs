@@ -44,7 +44,7 @@ public class OrdersController : ControllerBase
             ProductId = request.ProductId,
             Quantity = request.Quantity,
             Notes = request.Notes,
-            CreateAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow
         };
 
         _dbContext.Orders.Add(order);
