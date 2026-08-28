@@ -3,11 +3,26 @@ import { check, sleep } from 'k6';
 import exec from 'k6/execution';
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:8000';
-const RUN_ID = __ENV.RUN_ID || 'pilot-navigation-001';
+
+const RUN_ID = __ENV.RUN_ID;
+
+if (!RUN_ID) {
+    throw new Error('RUN_ID is required.');
+}
+
+const VUS = Number(__ENV.VUS || 1);
+const ITERATIONS_PER_VU =
+    Number(__ENV.ITERATIONS_PER_VU || 5);
 
 export const options = {
-    vus: 1,
-    iterations: 5,
+    scenarios: {
+        normal_navigation: {
+            executor: 'per-vu-iterations',
+            vus: VUS,
+            iterations: ITERATIONS_PER_VU,
+            maxDuration: '10m',
+        },
+    },
 };
 
 function randomInt(min, max) {
@@ -17,6 +32,29 @@ function randomInt(min, max) {
 function randomSleep(min, max) {
     const duration = Math.random() * (max - min) + min;
     sleep(duration);
+}
+
+function buildProductsUrl() {
+    const choice = Math.random();
+
+    if (choice < 0.4) {
+        return `${BASE_URL}/products`;
+    }
+
+    if (choice < 0.6) {
+        return `${BASE_URL}/products?page=1`;
+    }
+
+    const category =
+        Math.random() < 0.5
+            ? 'electronics'
+            : 'books';
+
+    if (choice < 0.8) {
+        return `${BASE_URL}/products?category=${category}`;
+    }
+
+    return `${BASE_URL}/products?page=1&category=${category}`;
 }
 
 function experimentHeaders(clientId) {
@@ -80,7 +118,7 @@ export default function () {
     // 2. Listagem de produtos
     //
     const productListResponse = http.get(
-        `${BASE_URL}/products`,
+        buildProductsUrl(),
         {
             headers: {
                 ...experimentHeaders(clientId),

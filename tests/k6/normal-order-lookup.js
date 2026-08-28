@@ -9,12 +9,25 @@ const BASE_URL = __ENV.BASE_URL || 'http://localhost:8000';
 const API_DIRECT_URL =
     __ENV.API_DIRECT_URL || 'http://localhost:8080';
 
-const RUN_ID =
-    __ENV.RUN_ID || 'pilot-order-lookup-001';
+const RUN_ID = __ENV.RUN_ID;
+
+if (!RUN_ID) {
+    throw new Error('RUN_ID is required.');
+}
+
+const VUS = Number(__ENV.VUS || 1);
+const ITERATIONS_PER_VU =
+    Number(__ENV.ITERATIONS_PER_VU || 5);
 
 export const options = {
-    vus: 1,
-    iterations: 5,
+    scenarios: {
+        normal_order_lookup: {
+            executor: 'per-vu-iterations',
+            vus: VUS,
+            iterations: ITERATIONS_PER_VU,
+            maxDuration: '10m',
+        },
+    },
 };
 
 function randomInt(min, max) {
