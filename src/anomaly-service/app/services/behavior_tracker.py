@@ -28,7 +28,7 @@ class ClientState:
 
 class BehaviorTracker:
     def __init__(self) -> None:
-        self._clients: dict[str, ClientState] = {}
+        self._clients: dict[tuple[str, str], ClientState] = {}
         self._lock = asyncio.Lock()
 
     async def process(
@@ -44,11 +44,24 @@ class BehaviorTracker:
                 reason="missing_client_id",
             )
 
+        if not event.run_id:
+            return EventResponse(
+                status="skipped",
+                request_id=event.request_id,
+                eligible_for_model=False,
+                reason="missing_run_id",
+            )
+
         normalized_route = normalize_route(event.request_path)
+
+        state_key = (
+            event.run_id,
+            event.client_id,
+        )
 
         async with self._lock:
             state = self._clients.setdefault(
-                event.client_id,
+                state_key,
                 ClientState(),
             )
 
