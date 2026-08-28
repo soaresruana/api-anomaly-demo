@@ -41,6 +41,19 @@ class BehavioralFeatures(BaseModel):
     distinct_routes_last_30s: int
 
 
+class AnomalyDetection(BaseModel):
+    classification: Literal[
+        "normal",
+        "anomaly",
+    ]
+
+    is_anomaly: bool
+
+    score: float
+
+    threshold: float
+
+
 class EventResponse(BaseModel):
     status: Literal["accepted", "skipped"]
 
@@ -51,3 +64,5 @@ class EventResponse(BaseModel):
     reason: str | None = None
 
     features: BehavioralFeatures | None = None
+
+    detection: AnomalyDetection | None = None
