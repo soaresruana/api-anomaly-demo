@@ -5,6 +5,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import FunctionTransformer, OneHotEncoder
 
 from app.persistence.dataset_repository import DatasetRecord
+from app.schemas import BehavioralFeatures
 
 
 RAW_FEATURE_NAMES = (
@@ -30,13 +31,14 @@ NUMERIC_FEATURE_INDICES = (
     6,
 )
 
+
 def _to_float64(
     values: np.ndarray,
 ) -> np.ndarray:
-        return values.astype(
-            np.float64,
-            copy=False,
-)
+    return values.astype(
+        np.float64,
+        copy=False,
+    )
 
 
 def records_to_raw_features(
@@ -59,6 +61,32 @@ def records_to_raw_features(
     )
 
 
+def behavioral_features_to_raw_features(
+    features: BehavioralFeatures,
+) -> np.ndarray:
+    if features.inter_arrival_ms is None:
+        raise ValueError(
+            "Behavioral features are not eligible "
+            "for model inference because "
+            "inter_arrival_ms is missing."
+        )
+
+    return np.asarray(
+        [
+            (
+                features.http_method,
+                features.route,
+                features.payload_size_bytes,
+                features.query_param_count,
+                features.inter_arrival_ms,
+                features.requests_last_10s,
+                features.distinct_routes_last_30s,
+            )
+        ],
+        dtype=object,
+    )
+
+
 def build_feature_preprocessor() -> ColumnTransformer:
     return ColumnTransformer(
         transformers=[
@@ -70,7 +98,7 @@ def build_feature_preprocessor() -> ColumnTransformer:
                 ),
                 CATEGORICAL_FEATURE_INDICES,
             ),
-           (
+            (
                 "numeric",
                 FunctionTransformer(
                     _to_float64,
