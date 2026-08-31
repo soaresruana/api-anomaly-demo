@@ -4,7 +4,7 @@ local cjson = require "cjson.safe"
 
 local AnomalyCollector = {
   PRIORITY = 1000,
-  VERSION = "0.4.0",
+  VERSION = "0.5.0",
 }
 
 
@@ -27,7 +27,7 @@ local function count_table_keys(tbl)
 end
 
 
-local function log_detection_result(
+local function get_detection_result(
   request_id,
   payload
 )
@@ -45,7 +45,7 @@ local function log_detection_result(
       tostring(payload.reason)
     )
 
-    return
+    return nil
   end
 
   local classification =
@@ -62,7 +62,7 @@ local function log_detection_result(
       tostring(classification)
     )
 
-    return
+    return nil
   end
 
   kong.log.notice(
@@ -76,6 +76,64 @@ local function log_detection_result(
     tostring(detection.score),
     " threshold=",
     tostring(detection.threshold)
+  )
+
+  return detection
+end
+
+
+local function apply_response_mode(
+  conf,
+  request_id,
+  detection
+)
+  if detection == nil then
+    return
+  end
+
+  if conf.response_mode == "log_only" then
+    kong.log.notice(
+      "[ANOMALY_ACTION] request_id=",
+      request_id,
+      " mode=log_only action=allow",
+      " classification=",
+      tostring(detection.classification)
+    )
+
+    return
+  end
+
+  if conf.response_mode == "block"
+      and detection.classification == "anomaly" then
+
+    kong.log.warn(
+      "[ANOMALY_ACTION] request_id=",
+      request_id,
+      " mode=block action=block",
+      " classification=anomaly"
+    )
+
+    return kong.response.exit(
+      403,
+      {
+        message = "Request blocked by anomaly detection.",
+        code = "anomalous_request_blocked",
+        request_id = request_id,
+      },
+      {
+        ["Content-Type"] = "application/json",
+      }
+    )
+  end
+
+  kong.log.notice(
+    "[ANOMALY_ACTION] request_id=",
+    request_id,
+    " mode=",
+    tostring(conf.response_mode),
+    " action=allow",
+    " classification=",
+    tostring(detection.classification)
   )
 end
 
@@ -204,9 +262,16 @@ function AnomalyCollector:access(conf)
     response.status
   )
 
-  log_detection_result(
+  local detection =
+    get_detection_result(
+      request_id,
+      payload
+    )
+
+  return apply_response_mode(
+    conf,
     request_id,
-    payload
+    detection
   )
 end
 
