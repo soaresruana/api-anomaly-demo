@@ -39,6 +39,8 @@ services:
 
       KONG_PLUGINS: bundled,anomaly-collector
 
+      KONG_DNS_ORDER: "LAST,A,CNAME"
+
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
 
