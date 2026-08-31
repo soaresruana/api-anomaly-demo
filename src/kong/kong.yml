@@ -13,3 +13,5 @@ services:
 plugins:
   - name: anomaly-collector
     service: api-demo-service
+    config:
+      response_mode: block
