@@ -491,3 +491,16 @@ $RECYCLE.BIN/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Local editor settings
+.vscode/
+
+# Presentation local dependencies and private presentation notes
+presentation/node_modules/
+presentation/script.md
+
+# Local archives
+api-anomaly-detection.zip
+
+# Official immutable experimental dataset used for reproducibility
+!data/official/experiment-official.db

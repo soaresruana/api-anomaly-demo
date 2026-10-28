@@ -1,0 +1,623 @@
+/* @theme tcc */
+
+@import 'default';
+
+:root {
+  --primary: #163a5f;
+  --secondary: #2d7fa3;
+  --accent: #49a6c6;
+  --text: #1f2933;
+  --muted: #64748b;
+  --background: #f7f9fb;
+  --surface: #ffffff;
+  --border: #dbe4ea;
+}
+
+section {
+  background: var(--background);
+  color: var(--text);
+  font-family: "Aptos", "Segoe UI", Arial, sans-serif;
+
+  width: 1280px;
+  height: 720px;
+
+  padding: 58px 72px;
+
+  font-size: 28px;
+  line-height: 1.35;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 48px;
+  line-height: 1.1;
+  margin-bottom: 22px;
+}
+
+h2 {
+  font-size: 40px;
+  margin-bottom: 28px;
+}
+
+h3 {
+  font-size: 27px;
+  color: var(--secondary);
+  font-weight: 500;
+}
+
+strong {
+  color: var(--primary);
+}
+
+small {
+  color: var(--muted);
+}
+
+section::after {
+  color: var(--muted);
+  font-size: 16px;
+}
+
+/* Slide de abertura */
+section.title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      115deg,
+      rgba(22, 58, 95, 0.06),
+      rgba(73, 166, 198, 0.08)
+    ),
+    var(--background);
+
+  border-left: 14px solid var(--secondary);
+}
+
+section.title h1 {
+  max-width: 1050px;
+  font-size: 50px;
+}
+
+section.title h3 {
+  max-width: 980px;
+  margin-top: 0;
+  margin-bottom: 38px;
+}
+
+/* Pergunta central */
+.question {
+  margin-top: 22px;
+  padding: 20px 26px;
+
+  background: var(--surface);
+  border-left: 5px solid var(--accent);
+  border-radius: 8px;
+
+  font-size: 25px;
+  font-weight: 600;
+}
+
+/* Texto auxiliar */
+.meta {
+  margin-top: 30px;
+  color: var(--muted);
+  font-size: 21px;
+}
+
+/* Slide de problema */
+
+.problem-flow {
+  margin-top: 10px;
+}
+
+.problem-flow > strong {
+  display: block;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.problem-grid > div {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 22px;
+}
+
+.problem-grid h3 {
+  font-size: 22px;
+  margin: 0 0 8px 0;
+  color: var(--primary);
+}
+
+.problem-grid p {
+  font-size: 18px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.takeaway {
+  margin-top: 22px;
+  padding: 14px 20px;
+  border-left: 5px solid var(--accent);
+  background: rgba(73, 166, 198, 0.08);
+  font-size: 22px;
+}
+
+/* Fluxo simplificado da solução */
+
+.solution-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 70px 0 48px 0;
+}
+
+.flow-box {
+  width: 210px;
+  min-height: 115px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 18px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  text-align: center;
+}
+
+.flow-box.highlight {
+  border: 2px solid var(--secondary);
+  background: rgba(73, 166, 198, 0.07);
+}
+
+.flow-box strong {
+  display: block;
+  font-size: 23px;
+  margin-bottom: 8px;
+}
+
+.flow-box span {
+  font-size: 17px;
+  color: var(--muted);
+}
+
+.flow-arrow {
+  font-size: 38px;
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+.process-line {
+  text-align: center;
+  font-size: 25px;
+  color: var(--primary);
+  margin-bottom: 35px;
+}
+
+/* Arquitetura implementada */
+
+.architecture-image-full {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.architecture-image-full img {
+  width: 82%;
+  max-height: 480px;
+  object-fit: contain;
+}
+
+/* Fluxo de análise */
+
+.analysis-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 55px;
+}
+
+.analysis-step {
+  width: 205px;
+  min-height: 120px;
+  padding: 18px 14px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+}
+
+.highlight-step {
+  border: 2px solid var(--secondary);
+  background: rgba(73, 166, 198, 0.07);
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+  margin-bottom: 8px;
+
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.analysis-step strong {
+  font-size: 20px;
+}
+
+.analysis-step small {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.analysis-arrow {
+  font-size: 30px;
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+
+/* Avaliação experimental */
+
+.evaluation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 30px;
+}
+
+.evaluation-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 26px;
+}
+
+.evaluation-card h3 {
+  margin: 0 0 20px 0;
+  font-size: 25px;
+  color: var(--primary);
+}
+
+.dataset-row,
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+
+  font-size: 17px;
+}
+
+.dataset-row span,
+.profile-row span {
+  color: var(--muted);
+}
+
+.scenario-list,
+.latency-summary {
+  margin-top: 20px;
+  padding: 12px 14px;
+
+  background: rgba(73, 166, 198, 0.07);
+  border-radius: 8px;
+
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* Métricas globais */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-top: 55px;
+}
+
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  padding: 30px 16px;
+
+  text-align: center;
+}
+
+.metric-value {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.metric-label {
+  margin-top: 12px;
+  font-size: 17px;
+  color: var(--muted);
+}
+
+
+.confusion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+.confusion-item {
+  background: #f7f9fb;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.confusion-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.1;
+}
+
+.confusion-text {
+  margin-top: 6px;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+/* Resultado por cenário */
+
+.scenario-results {
+  margin-top: 45px;
+}
+
+.scenario-row {
+  display: grid;
+  grid-template-columns: 230px 1fr 70px;
+  align-items: center;
+  gap: 16px;
+
+  margin-bottom: 18px;
+}
+
+.scenario-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.scenario-bar {
+  height: 24px;
+
+  background: #e8eef2;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.scenario-fill {
+  height: 100%;
+  border-radius: 12px;
+
+  background: var(--secondary);
+}
+
+.scenario-fill.full {
+  width: 100%;
+}
+
+.scenario-fill.low {
+  width: 10%;
+}
+
+.scenario-fill.zero {
+  width: 0%;
+}
+
+.scenario-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  text-align: right;
+}
+
+/* Impacto sobre a latência */
+
+.latency-results {
+  margin-top: 42px;
+}
+
+.latency-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 110px;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.latency-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.latency-label strong {
+  font-size: 20px;
+}
+
+.latency-label span {
+  margin-top: 2px;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.latency-bar {
+  height: 28px;
+  background: #e8eef2;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.latency-fill {
+  height: 100%;
+  border-radius: 14px;
+  background: var(--secondary);
+}
+
+.latency-fill.p0 {
+  width: 14.4%;
+}
+
+.latency-fill.p1 {
+  width: 17.9%;
+}
+
+.latency-fill.p2 {
+  width: 100%;
+}
+
+.latency-value {
+  text-align: right;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.overhead-highlight {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.overhead-highlight > div {
+  padding: 15px 18px;
+  text-align: center;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+.overhead-highlight span {
+  display: block;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.overhead-highlight strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 23px;
+}
+
+.overhead-highlight .overhead-main {
+  border: 2px solid var(--secondary);
+  background: rgba(73, 166, 198, 0.07);
+}
+
+/* Conclusão */
+
+.conclusion-question {
+  margin-top: 28px;
+  padding: 24px 30px;
+
+  background: var(--surface);
+  border-left: 5px solid var(--secondary);
+  border-radius: 10px;
+
+  font-size: 23px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.conclusion-answer {
+  margin-top: 14px;
+
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.conclusion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  margin-top: 28px;
+}
+
+.conclusion-card {
+  padding: 22px 25px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.conclusion-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  color: var(--primary);
+}
+
+.future-line {
+  margin-top: 24px;
+  padding: 13px 18px;
+
+  text-align: center;
+
+  background: rgba(73, 166, 198, 0.07);
+  border-radius: 8px;
+
+  font-size: 16px;
+  color: var(--muted);
+}
+
