@@ -25,100 +25,48 @@ Análise e Desenvolvimento de Sistemas — UNISINOS
 
 ---
 
-## O problema
+## Do problema à proposta
 
-<div class="problem-flow">
+<div class="split-layout">
 
-**Arquiteturas de microserviços distribuem a aplicação entre múltiplos serviços**
+<div class="split-panel">
 
-<div class="problem-grid">
+### O problema
 
-<div>
+<div class="compact-list">
 
-### Mais pontos de comunicação
+<div><strong>Mais pontos de comunicação</strong><span>Microserviços ampliam os fluxos que precisam ser observados.</span></div>
 
-Quanto mais serviços, maior a superfície que precisa ser observada.
+<div><strong>Comportamentos desconhecidos</strong><span>Nem toda atividade suspeita corresponde a uma assinatura conhecida.</span></div>
 
-</div>
-
-<div>
-
-### Comportamentos desconhecidos
-
-Nem toda atividade suspeita corresponde a uma assinatura previamente conhecida.
+<div><strong>Acoplamento</strong><span>Levar a lógica de análise para cada backend aumenta a dependência da aplicação.</span></div>
 
 </div>
 
-<div>
-
-### Maior acoplamento
-
-Implementar a detecção dentro de cada aplicação distribui a lógica de segurança.
-
 </div>
 
-<div>
+<div class="split-panel proposed">
 
-### Tecnologias diferentes
+### A proposta
 
-Cada backend pode utilizar linguagens e frameworks distintos.
+<div class="mini-flow">
+<div class="mini-box">Cliente</div>
+<div class="mini-arrow">→</div>
+<div class="mini-box emphasis">Gateway</div>
+<div class="mini-arrow">→</div>
+<div class="mini-box emphasis">Análise</div>
+<div class="mini-arrow">→</div>
+<div class="mini-box">API</div>
+</div>
+
+<p class="proposal-text">Interceptar o tráfego, extrair características e realizar a classificação <strong>fora do código da aplicação protegida</strong>.</p>
 
 </div>
 
 </div>
 
 <div class="takeaway">
-
-**Ideia:** levar a análise para uma camada intermediária ao tráfego.
-
-</div>
-
-</div>
-
----
-
-## A proposta
-
-<div class="solution-flow">
-
-<div class="flow-box">
-<strong>Cliente</strong>
-<span>Envia a requisição HTTP</span>
-</div>
-
-<div class="flow-arrow">→</div>
-
-<div class="flow-box highlight">
-<strong>Gateway</strong>
-<span>Intercepta a requisição</span>
-</div>
-
-<div class="flow-arrow">→</div>
-
-<div class="flow-box highlight">
-<strong>Análise comportamental</strong>
-<span>Extrai características e classifica</span>
-</div>
-
-<div class="flow-arrow">→</div>
-
-<div class="flow-box">
-<strong>API</strong>
-<span>Recebe a requisição permitida</span>
-</div>
-
-</div>
-
-<div class="process-line">
-
-**Interceptar → analisar → classificar → responder**
-
-</div>
-
-<div class="takeaway">
-
-**Objetivo:** realizar a detecção sem modificar o código-fonte da aplicação protegida.
-
+<strong>Objetivo:</strong> avaliar a viabilidade de uma camada intermediária capaz de observar, classificar e responder a comportamentos anômalos.
 </div>
 
 ---
@@ -134,341 +82,138 @@ Cada backend pode utilizar linguagens e frameworks distintos.
 </div>
 
 <div class="takeaway">
-
-**Ponto central:** a aplicação protegida não possui dependência direta do mecanismo de detecção.
-
+<strong>Ponto central:</strong> Kong e Anomaly Service formam o middleware lógico; a API .NET permanece independente do mecanismo de análise.
 </div>
 
 ---
 
-## Como uma requisição é analisada?
+## Como funciona, como foi avaliado e como é reproduzido
 
-<div class="analysis-flow">
+<div class="three-grid">
 
-<div class="analysis-step">
-<span class="step-number">1</span>
-<strong>Requisição HTTP</strong>
-<small>Dados observados pelo gateway</small>
+<div class="compact-card">
+
+### 1. Classificação
+
+<div class="vertical-flow">
+<span>Requisição HTTP</span>
+<b>↓</b>
+<span>7 características</span>
+<b>↓</b>
+<span>Isolation Forest</span>
+<b>↓</b>
+<span>score × limiar</span>
 </div>
 
-<div class="analysis-arrow">→</div>
-
-<div class="analysis-step">
-<span class="step-number">2</span>
-<strong>Características</strong>
-<small>Método, rota, payload, frequência...</small>
-</div>
-
-<div class="analysis-arrow">→</div>
-
-<div class="analysis-step highlight-step">
-<span class="step-number">3</span>
-<strong>Isolation Forest</strong>
-<small>Calcula um score para a observação</small>
-</div>
-
-<div class="analysis-arrow">→</div>
-
-<div class="analysis-step">
-<span class="step-number">4</span>
-<strong>Decisão</strong>
-<small>Normal ou anômala</small>
-</div>
+<small>Método, rota, payload, parâmetros e características do histórico recente.</small>
 
 </div>
 
-<div class="takeaway">
+<div class="compact-card">
 
-**Ideia central:** o modelo analisa uma representação do comportamento da requisição, e não a requisição HTTP completa.
+### 2. Avaliação
 
-</div>
+<div class="dataset-compact"><strong>Treino</strong><span>2.066 normais</span></div>
+<div class="dataset-compact"><strong>Validação</strong><span>507 normais</span></div>
+<div class="dataset-compact"><strong>Teste</strong><span>570 normais + 496 anômalas</span></div>
 
----
-
-## Como a solução foi avaliada?
-
-<div class="evaluation-grid">
-
-<div class="evaluation-card">
-
-### Detecção
-
-<div class="dataset-row">
-<strong>Treinamento</strong>
-<span>2.066 normais</span>
-</div>
-
-<div class="dataset-row">
-<strong>Validação</strong>
-<span>507 normais</span>
-</div>
-
-<div class="dataset-row">
-<strong>Teste</strong>
-<span>570 normais + 496 anômalas</span>
-</div>
-
-<div class="scenario-list">
-Burst · Payload · Query Params · Route Diversification · Method-Route
-</div>
-
-</div>
-
-<div class="evaluation-card">
-
-### Latência
-
-<div class="profile-row">
-<strong>P0</strong>
-<span>Acesso direto à API</span>
-</div>
-
-<div class="profile-row">
-<strong>P1</strong>
-<span>Gateway sem análise</span>
-</div>
-
-<div class="profile-row">
-<strong>P2</strong>
-<span>Solução completa</span>
-</div>
-
-<div class="latency-summary">
-5 execuções por perfil<br>
+<div class="latency-mini">
+<strong>Latência:</strong> P0 · P1 · P2<br>
 500 medições válidas por perfil
 </div>
 
 </div>
 
+<div class="compact-card repro-card">
+
+### 3. Reprodutibilidade
+
+<div class="repro-flow">
+<span>SQLite oficial</span>
+<b>↓</b>
+<span>SHA-256</span>
+<b>↓</b>
+<span>Build do serviço</span>
+<b>↓</b>
+<span>Treino + calibração + teste</span>
 </div>
 
-<div class="takeaway">
+<small>14 execuções oficiais · 4.005 eventos · 3.639 observações elegíveis</small>
 
-**Princípio experimental:** o conjunto de teste permaneceu separado do treinamento e da calibração do modelo.
-
-</div>
-
----
-
-## Resultado global da detecção
-
-<div class="metrics-grid">
-
-<div class="metric-card">
-<div class="metric-value">86,11%</div>
-<div class="metric-label">Precisão</div>
-</div>
-
-<div class="metric-card">
-<div class="metric-value">62,50%</div>
-<div class="metric-label">Taxa de detecção</div>
-</div>
-
-<div class="metric-card">
-<div class="metric-value">72,43%</div>
-<div class="metric-label">F1-score</div>
-</div>
-
-<div class="metric-card">
-<div class="metric-value">8,77%</div>
-<div class="metric-label">Taxa de falsos positivos</div>
 </div>
 
 </div>
 
-<div class="confusion-grid">
-
-<div class="confusion-item">
-<div class="confusion-number">310</div>
-<div class="confusion-text">Verdadeiros positivos</div>
-</div>
-
-<div class="confusion-item">
-<div class="confusion-number">520</div>
-<div class="confusion-text">Verdadeiros negativos</div>
-</div>
-
-<div class="confusion-item">
-<div class="confusion-number">50</div>
-<div class="confusion-text">Falsos positivos</div>
-</div>
-
-<div class="confusion-item">
-<div class="confusion-number">186</div>
-<div class="confusion-text">Falsos negativos</div>
-</div>
-
-</div>
-
-<div class="takeaway">
-
-**Leitura principal:** o mecanismo apresentou boa precisão, mas ainda deixou uma parcela relevante das anomalias sem detecção.
-
+<div class="demo-callout">
+<strong>Demonstração</strong>
 </div>
 
 ---
 
-## Resultado por cenário
+<!-- _class: diagnostic -->
 
-<div class="scenario-results">
+## Análise complementar — sensibilidade ao histórico inicial
 
-<div class="scenario-row">
-<div class="scenario-name">Payload atípico</div>
-<div class="scenario-bar">
-<div class="scenario-fill full"></div>
-</div>
-<div class="scenario-value">100%</div>
-</div>
+Os testes diagnósticos foram realizados **após a avaliação oficial** e não alteram suas métricas.
 
-<div class="scenario-row">
-<div class="scenario-name">Parâmetros de consulta</div>
-<div class="scenario-bar">
-<div class="scenario-fill full"></div>
-</div>
-<div class="scenario-value">100%</div>
-</div>
+| Cenário | Histórico curto — normal | Histórico curto — anômalo | Histórico estabelecido — normal | Histórico estabelecido — anômalo |
+|---|---:|---:|---:|---:|
+| Query parameters | 20/20 bloqueadas | 20/20 bloqueadas | 0/20 bloqueadas | 0/20 bloqueadas |
+| Payload | 20/20 bloqueadas | 20/20 bloqueadas | 0/20 bloqueadas | 0/20 bloqueadas |
+| Method-route | 20/20 bloqueadas | 20/20 bloqueadas | 0/20 bloqueadas | 0/20 bloqueadas* |
 
-<div class="scenario-row">
-<div class="scenario-name">Método-rota</div>
-<div class="scenario-bar">
-<div class="scenario-fill full"></div>
-</div>
-<div class="scenario-value">100%</div>
-</div>
-
-<div class="scenario-row">
-<div class="scenario-name">Rajada (Burst)</div>
-<div class="scenario-bar">
-<div class="scenario-fill low"></div>
-</div>
-<div class="scenario-value">10%</div>
-</div>
-
-<div class="scenario-row">
-<div class="scenario-name">Diversificação de rotas</div>
-<div class="scenario-bar">
-<div class="scenario-fill zero"></div>
-</div>
-<div class="scenario-value">0%</div>
-</div>
-
-</div>
+<small>*No cenário Method-route com histórico estabelecido, GET /orders chegou ao backend e retornou HTTP 405.</small>
 
 <div class="takeaway">
-
-**Conclusão:** a eficácia da detecção dependeu da capacidade das características de representar cada tipo de comportamento anômalo.
-
+<strong>Leitura:</strong> os 100% observados no conjunto oficial não podem ser atribuídos exclusivamente à característica anômala testada; o período de <em>cold start</em> também influenciou a classificação.
 </div>
 
 ---
 
-## Impacto sobre a latência
+## Conclusões, limitações e aprendizados
 
-<div class="latency-results">
+<div class="final-grid">
 
-<div class="latency-row">
-<div class="latency-label">
-<strong>P0</strong>
-<span>Acesso direto</span>
-</div>
-<div class="latency-bar">
-<div class="latency-fill p0"></div>
-</div>
-<div class="latency-value">10,82 ms</div>
-</div>
-
-<div class="latency-row">
-<div class="latency-label">
-<strong>P1</strong>
-<span>Gateway</span>
-</div>
-<div class="latency-bar">
-<div class="latency-fill p1"></div>
-</div>
-<div class="latency-value">13,42 ms</div>
-</div>
-
-<div class="latency-row">
-<div class="latency-label">
-<strong>P2</strong>
-<span>Solução completa</span>
-</div>
-<div class="latency-bar">
-<div class="latency-fill p2"></div>
-</div>
-<div class="latency-value">75,06 ms</div>
-</div>
-
-</div>
-
-<div class="overhead-highlight">
-
-<div>
-<span>Gateway</span>
-<strong>+2,60 ms</strong>
-</div>
-
-<div>
-<span>Middleware de análise</span>
-<strong>+61,64 ms</strong>
-</div>
-
-<div class="overhead-main">
-<span>Overhead total</span>
-<strong>+64,24 ms</strong>
-</div>
-
-</div>
-
-<div class="takeaway">
-
-**Trade-off:** o desacoplamento da análise trouxe como contrapartida um aumento mensurável no tempo de resposta.
-
-</div>
-
----
-
-## Conclusão
-
-<div class="conclusion-question">
-
-É possível detectar comportamentos anômalos em uma API sem alterar o código da aplicação protegida?
-
-<div class="conclusion-answer">
-Sim — no contexto experimental avaliado.
-</div>
-
-</div>
-
-<div class="conclusion-grid">
-
-<div class="conclusion-card">
+<div class="final-card">
 
 ### O que foi demonstrado
 
 ✓ Interceptação desacoplada  
-✓ Detecção com modelo não supervisionado  
-✓ Resposta automatizada  
-✓ Avaliação de detecção e latência
+✓ Modelo não supervisionado integrado ao fluxo  
+✓ Resposta automatizada pelo gateway  
+✓ Avaliação oficial reproduzível
 
 </div>
 
-<div class="conclusion-card">
+<div class="final-card limits">
 
-### Limitações observadas
+### Limitações identificadas
 
-Detecção variou entre os cenários
+• Desempenho de classificação varia entre cenários  
+• Sensibilidade ao histórico inicial (*cold start*)  
+• Overhead médio de **+64,24 ms**  
+• Avaliação em ambiente controlado
 
-Overhead médio de **+64,24 ms**
+</div>
 
-Avaliação realizada em ambiente controlado
+<div class="final-card learning">
+
+### Aprendizados do curso aplicados
+
+APIs e arquitetura · segurança  
+Docker e integração de serviços  
+Banco de dados · testes  
+Aprendizado de máquina e análise de dados  
+Método experimental e reprodutibilidade
 
 </div>
 
 </div>
 
 <div class="future-line">
+<strong>Próximos passos:</strong> estratégia de cold start · histórico mínimo · novas características · outros modelos · escalabilidade
+</div>
 
-<strong>Próximos passos:</strong> novas características · outros algoritmos · escalabilidade · diferentes tecnologias de backend
-
+<div class="closing-line">
+A contribuição principal foi demonstrar a viabilidade da abordagem e, ao mesmo tempo, identificar com clareza seus custos e limites.
 </div>
