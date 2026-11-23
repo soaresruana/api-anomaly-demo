@@ -74,7 +74,8 @@ api-anomaly-detection/
 │   └── official/
 │       └── experiment-official.db
 ├── scripts/
-│   └── reproduce-official-evaluation.ps1
+│   ├── reproduce-official-evaluation.ps1
+│   └── reproduce-official-latency-analysis.ps1
 ├── presentation/
 ├── src/
 │   ├── anomaly-service/
@@ -117,13 +118,17 @@ api-anomaly-detection/
         └── P0/
 ```
 
-Diretórios locais de IDE, ambientes virtuais, bancos de desenvolvimento e artefatos de build não fazem parte da estrutura versionada do projeto.
+Diretórios locais de IDE, ambientes virtuais e artefatos de build não fazem parte da estrutura versionada do projeto.
+
+O arquivo `src/api-demo/api-demo.db` pertence à aplicação de demonstração e é mantido separado da base experimental utilizada pela avaliação. O conjunto oficial da pesquisa está preservado exclusivamente em `data/official/experiment-official.db`.
 
 ## Pré-requisitos
 
 Para executar a arquitetura completa, é necessário ter **Docker Engine + Docker Compose**.
 
 Para executar os scripts experimentais diretamente no host, também é necessário instalar o **k6**.
+
+Os scripts de reprodução em `scripts/` são escritos em PowerShell. No Windows, podem ser executados diretamente em uma sessão PowerShell; no macOS ou Linux, é necessário o **PowerShell 7+ (`pwsh`)**.
 
 ## Executando o ambiente
 
@@ -291,10 +296,18 @@ O hash validado durante a preservação do conjunto oficial foi:
 
 ### Reproduzindo a avaliação oficial
 
-Com Docker disponível, execute na raiz do repositório:
+Com Docker disponível, execute na raiz do repositório.
+
+Windows:
 
 ```powershell
 .\scripts\reproduce-official-evaluation.ps1
+```
+
+macOS / Linux com PowerShell 7+:
+
+```bash
+pwsh ./scripts/reproduce-official-evaluation.ps1
 ```
 
 O script:
@@ -408,6 +421,61 @@ A avaliação oficial foi organizada em cinco blocos contrabalanceados, com 100 
 - **1.500 observações oficiais de latência**.
 
 A configuração foi projetada para medir **overhead de latência em condições controladas**, e não throughput máximo ou escalabilidade.
+
+## Reprodutibilidade da análise oficial de latência
+
+As medições oficiais de latência estão preservadas em:
+
+```text
+results/latency/official/
+```
+
+O conjunto utilizado na análise contém **15 execuções válidas**, organizadas em cinco blocos experimentais, com **100 medições consideradas por execução**:
+
+- 5 execuções P0;
+- 5 execuções P1;
+- 5 execuções P2;
+- **1.500 observações oficiais no total**.
+
+As 20 requisições iniciais de aquecimento de cada execução não fazem parte das estatísticas analisadas.
+
+Para reproduzir a análise estatística sobre as medições oficiais, utilize:
+
+Windows:
+
+```powershell
+.\scripts\reproduce-official-latency-analysis.ps1
+```
+
+macOS / Linux com PowerShell 7+:
+
+```bash
+pwsh ./scripts/reproduce-official-latency-analysis.ps1
+```
+
+O script:
+
+1. valida a presença dos 15 arquivos oficiais;
+2. confirma as 100 medições válidas de cada execução;
+3. consolida 500 observações por perfil;
+4. recalcula média, mediana, P95, P99, mínimo, máximo e desvio-padrão;
+5. recalcula os overheads pareados por bloco e seus intervalos de confiança de 95%;
+6. compara os valores recalculados com os resultados reportados no trabalho.
+
+A reprodução validada produziu novamente:
+
+| Comparação | Resultado |
+|---|---:|
+| P0 — média | 10,82 ms |
+| P1 — média | 13,42 ms |
+| P2 — média | 75,06 ms |
+| P1 − P0 — Gateway | 2,60 ms |
+| P2 − P1 — Middleware de análise | 61,64 ms |
+| P2 − P0 — Solução completa | 64,24 ms |
+
+Ao final, o script sinaliza `PASS` para os valores que coincidem, em duas casas decimais, com os resultados oficiais.
+
+> A reprodução da latência corresponde à **reanálise das 1.500 medições oficiais preservadas**. Uma nova execução do teste de carga constitui uma nova coleta experimental e pode produzir tempos diferentes devido às condições do ambiente de execução.
 
 ## Resultados experimentais
 
